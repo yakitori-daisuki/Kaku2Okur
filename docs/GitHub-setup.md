@@ -31,19 +31,19 @@ setup コマンドは認証中のアカウントが一致することを確認�
 
 ## Create and push / 作成・push
 
-After authentication, create the public repository and push the prepared local commit. These commands assume that `origin` is already configured as above.
+After authentication, create the private repository and push the prepared local commit. These commands assume that `origin` is already configured as above. Public visibility has not been selected yet.
 
-認証後、公開リポジトリを作成して、準備済みのローカルコミットを push します。origin は設定済みの前提です。
+認証後、非公開リポジトリを作成して、準備済みのローカルコミットを push します。origin は設定済みの前提です。公開範囲はまだ指定されていないため、ここでは非公開にしています。
 
 ```bash
-./script/github.sh repo create yakitori-daisuki/Kaku2Okur --public \
+./script/github.sh repo create yakitori-daisuki/Kaku2Okur --private \
   --description "A lightweight native sketch-to-paste utility for macOS and Windows"
 git push -u origin main
 ```
 
-If the repository already exists, skip the creation command. Use the same folder-local CLI wrapper for future release operations.
+If the repository already exists, skip the creation command. Use the same folder-local CLI wrapper for future release operations. The unauthenticated README download commands are intended for publicly available release assets; they will not download assets from a private repository.
 
-すでにリポジトリが存在する場合は作成コマンドを省略します。以後の Release 操作も、このフォルダの `script/github.sh` を使ってください。
+すでにリポジトリが存在する場合は作成コマンドを省略します。以後の Release 操作も、このフォルダの `script/github.sh` を使ってください。README のログイン不要なダウンロードコマンドは、一般公開する Release 向けの準備です。非公開リポジトリのアセットは取得できません。
 
 ## Release assets / Release のアセット
 
