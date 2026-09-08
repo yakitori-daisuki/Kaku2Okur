@@ -1,0 +1,1273 @@
+import { AboutSlint, CheckBox, ComboBox, LineEdit, ScrollView, Slider } from "std-widgets.slint";
+
+component IconButton inherits Rectangle {
+    in property <image> icon;
+    in property <string> tooltip;
+    in property <bool> selected: false;
+    in property <bool> enabled: true;
+    in property <bool> primary: false;
+    in property <color> foreground: #20242a;
+    in property <color> accent: #1769ff;
+    in property <color> selected-background: #dbeafe;
+    in property <color> hover-background: #edf0f3;
+    callback clicked;
+
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border-width: selected ? 1px : 0px;
+    border-color: accent;
+    background: primary ? accent : selected ? selected-background : touch.has-hover ? hover-background : transparent;
+    opacity: enabled ? 1 : 0.32;
+    accessible-role: button;
+    accessible-label: tooltip;
+    accessible-enabled: enabled;
+    accessible-action-default => { if (enabled) { root.clicked(); } }
+
+    Image {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 18px;
+        height: 18px;
+        source: root.icon;
+        colorize: root.primary ? #ffffff : root.selected ? root.accent : root.foreground;
+        image-fit: contain;
+    }
+
+    touch := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: pointer;
+        clicked => root.clicked();
+    }
+
+    if touch.has-hover && root.tooltip != "" : Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: parent.height + 9px;
+        width: tip-text.preferred-width + 16px;
+        height: 26px;
+        border-radius: 5px;
+        background: #20242af2;
+        drop-shadow-blur: 8px;
+        drop-shadow-color: #00000028;
+
+        tip-text := Text {
+            x: 8px;
+            y: (parent.height - self.height) / 2;
+            text: root.tooltip;
+            color: #ffffff;
+            font-size: 11px;
+        }
+    }
+}
+
+component ColorButton inherits Rectangle {
+    in property <color> value;
+    in property <bool> selected: false;
+    in property <color> accent: #1769ff;
+    in property <color> border: #8b949e;
+    callback clicked;
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    border-width: selected ? 3px : 1px;
+    border-color: selected ? accent : border;
+    background: value;
+    accessible-role: button;
+    accessible-label: "Color";
+    TouchArea { mouse-cursor: pointer; clicked => root.clicked(); }
+}
+
+component AutoColorButton inherits Rectangle {
+    in property <bool> selected: false;
+    in property <color> accent: #1769ff;
+    in property <color> border: #8b949e;
+    callback clicked;
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    border-width: selected ? 3px : 1px;
+    border-color: selected ? accent : border;
+    accessible-role: button;
+    accessible-label: "Automatic color";
+    accessible-action-default => root.clicked();
+    Rectangle {
+        x: 4px;
+        y: 4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        clip: true;
+        Rectangle { width: 50%; height: 100%; background: #1f2328; }
+        Rectangle { x: parent.width / 2; width: 50%; height: 100%; background: #ffffff; }
+    }
+    TouchArea { mouse-cursor: pointer; clicked => root.clicked(); }
+}
+
+component SegmentButton inherits Rectangle {
+    in property <string> text;
+    in property <bool> enabled: true;
+    in property <bool> selected;
+    in property <color> foreground: #20242a;
+    in property <color> accent: #1769ff;
+    in property <color> selected-background: #dbeafe;
+    in property <color> hover-background: #edf0f3;
+    callback clicked;
+    height: 30px;
+    border-radius: 5px;
+    border-width: selected ? 1px : 0px;
+    border-color: accent;
+    background: selected ? selected-background : touch.has-hover ? hover-background : transparent;
+    accessible-role: button;
+    accessible-label: text;
+    accessible-enabled: enabled;
+    accessible-action-default => { if (enabled) { root.clicked(); } }
+    opacity: enabled ? 1 : 0.5;
+    Text {
+        text: root.text;
+        color: root.selected ? root.accent : root.foreground;
+        font-size: 11px;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    touch := TouchArea { enabled: root.enabled; mouse-cursor: pointer; clicked => root.clicked(); }
+}
+
+component HotspotButton inherits Rectangle {
+    in property <string> tooltip;
+    in property <bool> selected: false;
+    in property <color> foreground: #20242a;
+    in property <color> accent: #1769ff;
+    in property <color> surface: #ffffff;
+    in property <color> selected-background: #dbeafe;
+    in property <color> hover-background: #edf0f3;
+    callback clicked;
+
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    border-width: selected ? 2px : 1px;
+    border-color: selected ? accent : foreground;
+    background: selected ? selected-background : touch.has-hover ? hover-background : surface;
+    accessible-role: button;
+    accessible-label: tooltip;
+    accessible-action-default => root.clicked();
+
+    Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 7px;
+        height: 7px;
+        border-radius: 4px;
+        background: root.selected ? root.accent : root.foreground;
+    }
+
+    touch := TouchArea { mouse-cursor: pointer; clicked => root.clicked(); }
+
+    if touch.has-hover : Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: parent.height + 7px;
+        width: tip.preferred-width + 14px;
+        height: 24px;
+        border-radius: 5px;
+        background: #20242af2;
+        tip := Text {
+            x: 7px;
+            text: root.tooltip;
+            color: #ffffff;
+            font-size: 10px;
+            vertical-alignment: center;
+        }
+    }
+}
+
+component KeyStateBadge inherits Rectangle {
+    in property <string> text;
+    in property <bool> active: false;
+    in property <color> foreground: #20242a;
+    in property <color> muted: #68717b;
+    in property <color> accent: #1769ff;
+    in property <color> surface: #ffffff;
+    in property <color> active-background: #dbeafe;
+
+    height: 28px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: active ? accent : muted;
+    background: active ? active-background : surface;
+
+    Rectangle {
+        x: 8px;
+        y: (parent.height - self.height) / 2;
+        width: 7px;
+        height: 7px;
+        border-radius: 4px;
+        background: root.active ? root.accent : root.muted;
+    }
+    Text {
+        x: 21px;
+        width: parent.width - 27px;
+        text: root.text;
+        color: root.active ? root.accent : root.foreground;
+        font-size: 10px;
+        vertical-alignment: center;
+        overflow: elide;
+    }
+}
+
+export component MainWindow inherits Window {
+    title: "Kaku2Okur";
+    preferred-width: 820px;
+    preferred-height: 520px;
+    min-width: 680px;
+    min-height: 420px;
+    background: transparent;
+    default-font-family: "Inter";
+    forward-focus: text-editor;
+
+    in property <image> canvas-image;
+    in property <string> active-tool: "pen";
+    in property <bool> can-undo: false;
+    in property <bool> can-redo: false;
+    in property <bool> has-selection: false;
+    in property <bool> text-draggable: false;
+    in property <bool> system-dark: false;
+    in property <bool> is-macos: false;
+    in property <color> stroke-color: #1f2328;
+    in property <string> stroke-color-hex: "#1f2328";
+    in property <bool> stroke-color-automatic: true;
+    in property <float> stroke-width: 3;
+    in property <bool> auto-shape-enabled: true;
+    in property <bool> session-active: false;
+    in property <bool> trackpad-available: false;
+    in-out property <bool> trackpad-mode: false;
+    in-out property <bool> trackpad-suggestion-visible: false;
+
+    in-out property <bool> settings-visible: false;
+    in-out property <bool> about-visible: false;
+    in property <string> canvas-background-mode: "system";
+    in property <string> custom-canvas-color: "#ffffff";
+    in property <string> send-background-mode: "visible";
+    in property <string> custom-send-color: "#ffffff";
+    in property <string> invocation-mode: "dual-alternate";
+    in property <string> invocation-access-state: "ready";
+    in-out property <bool> invocation-permission-visible: false;
+    in-out property <bool> invocation-permission-checking: false;
+    in-out property <string> invocation-permission-result: "";
+    in property <bool> modifier-primary-left-down: false;
+    in property <bool> modifier-primary-right-down: false;
+    in property <bool> modifier-alternate-left-down: false;
+    in property <bool> modifier-alternate-right-down: false;
+    in property <string> hotspot-label: "Top left";
+    in property <string> hotspot-trigger: "long-press";
+    in property <string> hotspot-action: "none";
+    in-out property <int> hotspot-selected-index: 0;
+
+    in-out property <bool> text-editor-visible: false;
+    in-out property <float> text-editor-x: 0;
+    in-out property <float> text-editor-y: 0;
+    in-out property <string> text-editor-value: "";
+    in-out property <int> text-editor-cursor-offset: 0;
+    in-out property <string> toast: "";
+
+    private property <bool> color-popover-visible: false;
+    private property <bool> width-popover-visible: false;
+    private property <int> settings-page: 0;
+    private property <float> canvas-pointer-x: root.width / 2px;
+    private property <float> canvas-pointer-y: root.height / 2px;
+    private property <color> ui-foreground: system-dark ? #f4f6f8 : #20242a;
+    private property <color> ui-muted: system-dark ? #aab2bb : #68717b;
+    private property <color> ui-panel: system-dark ? #202328f5 : #fafbfcf5;
+    private property <color> ui-border: system-dark ? #41474f : #d8dde3;
+    private property <color> ui-hover: system-dark ? #30353b : #edf0f3;
+    private property <color> ui-selected: system-dark ? #15384a : #dbeafe;
+    private property <color> ui-surface: system-dark ? #171a1e : #ffffff;
+    private property <color> accent: system-dark ? #7dd3fc : #0b57d0;
+
+    callback open-requested;
+    callback invocation-triggered;
+    callback about-requested;
+    callback about-closed;
+    callback tool-selected(string);
+    callback pointer-pressed(float, float, float, float);
+    callback pointer-moved(float, float, float, float);
+    callback pointer-released(float, float, float, float);
+    callback text-entry-requested(float, float, float, float, string);
+    callback undo-requested;
+    callback redo-requested;
+    callback delete-requested;
+    callback send-requested;
+    callback dismiss-requested;
+    callback escape-requested;
+    callback window-drag-requested(float, float);
+    callback window-drag-moved(float, float);
+    callback window-drag-ended(float, float);
+    callback stroke-color-changed(string);
+    callback stroke-color-auto-selected;
+    callback stroke-width-changed(float);
+    callback auto-shape-changed(bool);
+    callback text-accepted(string);
+    callback pointer-hovered(float, float);
+    callback text-cancelled;
+    callback background-mode-changed(string);
+    callback custom-canvas-color-changed(string);
+    callback send-background-mode-changed(string);
+    callback custom-send-color-changed(string);
+    callback invocation-mode-changed(string);
+    callback invocation-permission-requested;
+    callback invocation-settings-requested;
+    callback invocation-permission-dismissed;
+    callback invocation-listener-failed;
+    callback trackpad-mode-changed(bool);
+    callback hotspot-selected(int);
+    callback hotspot-binding-changed(int, string, string);
+
+    out property <string> text-editor-preedit: text-editor.preedit-text;
+
+    public function focus-canvas-input() {
+        if (!root.settings-visible && !root.about-visible && !root.invocation-permission-visible && !text-editor.has-focus) {
+            text-editor.focus();
+        }
+    }
+
+    changed settings-visible => { root.focus-canvas-input(); }
+    changed about-visible => { root.focus-canvas-input(); }
+    changed invocation-permission-visible => { root.focus-canvas-input(); }
+
+    function reveal-text-editor() {
+        if (!root.text-editor-visible && !root.settings-visible && !root.about-visible
+            && !root.invocation-permission-visible
+            && (text-editor.text != "" || text-editor.preedit-text != "")) {
+            root.text-entry-requested(
+                root.canvas-pointer-x, root.canvas-pointer-y,
+                root.width / 1px, root.height / 1px, root.text-editor-value
+            );
+        }
+    }
+
+    changed text-editor-visible => {
+        if (root.text-editor-visible) {
+            // The same TextInput owns composition before and after revealing.
+            // Moving focus or selection here would cancel the native IME.
+            if (!text-editor.has-focus) {
+                text-editor.focus();
+                text-editor.set-selection-offsets(root.text-editor-cursor-offset, root.text-editor-cursor-offset);
+            }
+        } else {
+            text-editor.text = "";
+            text-editor.clear-focus();
+            text-editor.set-selection-offsets(0, 0);
+            editor-scroll.viewport-y = 0px;
+            text-editor.focus();
+        }
+    }
+
+    app-surface := Rectangle {
+        border-radius: 8px;
+        border-width: 1px;
+        border-color: root.ui-border;
+        background: root.system-dark ? #111315 : #ffffff;
+        clip: true;
+
+        Image {
+            width: 100%;
+            height: 100%;
+            source: root.canvas-image;
+            image-fit: fill;
+        }
+
+        canvas-focus := FocusScope {
+            width: 100%;
+            height: 100%;
+            focus-on-click: true;
+
+            key-pressed(event) => {
+                if ((root.is-macos ? event.modifiers.meta : event.modifiers.control) && event.text == "w") {
+                    root.dismiss-requested();
+                    return accept;
+                }
+                if (root.text-editor-visible || text-editor.preedit-text != "") { return reject; }
+                if (root.about-visible) {
+                    if (event.text == Key.Escape) { root.about-closed(); }
+                    return accept;
+                }
+                if (root.invocation-permission-visible) { return accept; }
+                if (root.settings-visible) {
+                    if (event.text == Key.Escape) { root.settings-visible = false; }
+                    return accept;
+                }
+                if ((root.is-macos ? event.modifiers.meta : event.modifiers.control) && event.text == "z") {
+                    if (event.modifiers.shift) { root.redo-requested(); }
+                    else { root.undo-requested(); }
+                    return accept;
+                }
+                if ((root.is-macos ? event.modifiers.meta : event.modifiers.control) && event.text == "y") {
+                    root.redo-requested();
+                    return accept;
+                }
+                if (event.text == Key.Return) {
+                    if (!event.repeat && !event.modifiers.control) { root.send-requested(); }
+                    return accept;
+                }
+                if (event.text == Key.Escape) {
+                    root.escape-requested();
+                    return accept;
+                }
+                if (event.text == Key.Delete || event.text == Key.Backspace) {
+                    root.delete-requested();
+                    return accept;
+                }
+                if (!event.modifiers.control && !event.modifiers.meta && !event.modifiers.alt && event.text != "") {
+                    root.text-entry-requested(
+                        root.canvas-pointer-x,
+                        root.canvas-pointer-y,
+                        root.width / 1px,
+                        root.height / 1px,
+                        event.text
+                    );
+                    return accept;
+                }
+                reject
+            }
+
+            canvas-touch := TouchArea {
+                mouse-cursor: root.text-draggable ? move :
+                    root.active-tool == "text" ? text :
+                    root.active-tool == "select" ? default : crosshair;
+
+                pointer-event(event) => {
+                    // TouchArea.moved only fires during a drag; ordinary hover
+                    // must also update where typing will open the editor.
+                    if (event.kind == PointerEventKind.move) {
+                        root.canvas-pointer-x = self.mouse-x / 1px;
+                        root.canvas-pointer-y = self.mouse-y / 1px;
+                        root.pointer-hovered(root.canvas-pointer-x, root.canvas-pointer-y);
+                        return;
+                    }
+                    if (event.button != PointerEventButton.left) { return; }
+                    if (event.kind == PointerEventKind.down) {
+                        root.canvas-pointer-x = self.mouse-x / 1px;
+                        root.canvas-pointer-y = self.mouse-y / 1px;
+                        if (root.trackpad-mode) { return; }
+                        if (root.text-editor-preedit != "") { text-editor.focus(); return; }
+                        text-editor.focus();
+                        if (root.text-editor-visible) {
+                            root.text-accepted(root.text-editor-value);
+                        }
+                        root.pointer-pressed(
+                            self.mouse-x / 1px,
+                            self.mouse-y / 1px,
+                            root.width / 1px,
+                            root.height / 1px
+                        );
+                    } else if (!root.trackpad-mode && (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel)) {
+                        root.pointer-released(
+                            self.mouse-x / 1px,
+                            self.mouse-y / 1px,
+                            root.width / 1px,
+                            root.height / 1px
+                        );
+                    }
+                }
+
+                moved => {
+                    if (self.pressed && !root.trackpad-mode) {
+                        root.pointer-moved(
+                            self.mouse-x / 1px,
+                            self.mouse-y / 1px,
+                            root.width / 1px,
+                            root.height / 1px
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    top-drag-region := TouchArea {
+        x: 54px;
+        y: 0px;
+        width: parent.width - 108px;
+        height: 68px;
+        mouse-cursor: grab;
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                root.window-drag-requested(self.mouse-x / 1px, self.mouse-y / 1px);
+            } else if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                root.window-drag-ended(self.mouse-x / 1px, self.mouse-y / 1px);
+            }
+        }
+        moved => { if (self.pressed) { root.window-drag-moved(self.mouse-x / 1px, self.mouse-y / 1px); } }
+    }
+
+    close-button := IconButton {
+        x: 15px;
+        y: 18px;
+        icon: @image-url("../assets/icons/x.svg");
+        tooltip: "Close";
+        foreground: root.ui-foreground;
+        accent: root.accent;
+        selected-background: root.ui-selected;
+        hover-background: root.ui-hover;
+        clicked => root.dismiss-requested();
+    }
+
+    toolbar := Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: 13px;
+        width: 540px;
+        height: 48px;
+        border-radius: 8px;
+        border-width: 1px;
+        border-color: root.ui-border;
+        background: root.ui-panel;
+        drop-shadow-blur: 22px;
+        drop-shadow-color: #171c231f;
+        drop-shadow-offset-y: 5px;
+
+        TouchArea {
+            mouse-cursor: grab;
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                    root.window-drag-requested(self.mouse-x / 1px, self.mouse-y / 1px);
+                } else if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                    root.window-drag-ended(self.mouse-x / 1px, self.mouse-y / 1px);
+                }
+            }
+            moved => { if (self.pressed) { root.window-drag-moved(self.mouse-x / 1px, self.mouse-y / 1px); } }
+        }
+
+        HorizontalLayout {
+            x: 6px;
+            y: 6px;
+            width: parent.width - 12px;
+            height: 36px;
+            spacing: 3px;
+
+            IconButton { icon: @image-url("../assets/icons/select.svg"); tooltip: "Select"; selected: root.active-tool == "select"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("select"); }
+            IconButton { icon: @image-url("../assets/icons/pen.svg"); tooltip: "Pen"; selected: root.active-tool == "pen"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("pen"); }
+            IconButton { icon: @image-url("../assets/icons/eraser.svg"); tooltip: "Eraser"; selected: root.active-tool == "eraser"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("eraser"); }
+            IconButton { icon: @image-url("../assets/icons/arrow.svg"); tooltip: "Arrow"; selected: root.active-tool == "arrow"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("arrow"); }
+            IconButton { icon: @image-url("../assets/icons/rectangle.svg"); tooltip: "Rectangle"; selected: root.active-tool == "rectangle"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("rectangle"); }
+            IconButton { icon: @image-url("../assets/icons/ellipse.svg"); tooltip: "Ellipse"; selected: root.active-tool == "ellipse"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("ellipse"); }
+            IconButton { icon: @image-url("../assets/icons/text.svg"); tooltip: "Text"; selected: root.active-tool == "text"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.tool-selected("text"); }
+
+            Rectangle { width: 1px; height: 22px; y: 7px; background: root.ui-border; }
+
+            IconButton { icon: @image-url("../assets/icons/undo.svg"); tooltip: "Undo"; enabled: root.can-undo; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.undo-requested(); }
+            IconButton { icon: @image-url("../assets/icons/redo.svg"); tooltip: "Redo"; enabled: root.can-redo; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.redo-requested(); }
+
+            Rectangle { width: 1px; height: 22px; y: 7px; background: root.ui-border; }
+
+            color-anchor := Rectangle {
+                width: 36px;
+                height: 36px;
+                border-radius: 6px;
+                background: color-touch.has-hover ? root.ui-hover : transparent;
+                Rectangle {
+                    x: 9px; y: 9px; width: 18px; height: 18px;
+                    border-radius: 9px; border-width: 1px; border-color: root.ui-muted;
+                    background: root.stroke-color;
+                }
+                color-touch := TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => {
+                        root.color-popover-visible = !root.color-popover-visible;
+                        root.width-popover-visible = false;
+                    }
+                }
+            }
+
+            width-anchor := Rectangle {
+                width: 48px;
+                height: 36px;
+                border-radius: 6px;
+                background: width-touch.has-hover ? root.ui-hover : transparent;
+                Rectangle {
+                    x: 10px;
+                    y: (parent.height - self.height) / 2;
+                    width: 28px;
+                    height: max(1px, root.stroke-width * 1px);
+                    border-radius: self.height / 2;
+                    background: root.ui-foreground;
+                }
+                width-touch := TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => {
+                        root.width-popover-visible = !root.width-popover-visible;
+                        root.color-popover-visible = false;
+                    }
+                }
+            }
+
+            IconButton { icon: @image-url("../assets/icons/touchpad.svg"); tooltip: "Trackpad sketch"; visible: root.trackpad-available; selected: root.trackpad-mode; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.trackpad-mode = !root.trackpad-mode; root.trackpad-mode-changed(root.trackpad-mode); } }
+            IconButton { icon: @image-url("../assets/icons/send.svg"); tooltip: "Send"; primary: true; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.send-requested(); }
+        }
+    }
+
+    settings-button := IconButton {
+        x: parent.width - self.width - 15px;
+        y: 18px;
+        icon: @image-url("../assets/icons/settings.svg");
+        tooltip: "Settings";
+        selected: root.settings-visible;
+        foreground: root.ui-foreground;
+        accent: root.accent;
+        selected-background: root.ui-selected;
+        hover-background: root.ui-hover;
+        clicked => {
+            root.settings-visible = !root.settings-visible;
+            root.color-popover-visible = false;
+            root.width-popover-visible = false;
+        }
+    }
+
+    if root.color-popover-visible : Rectangle {
+        x: toolbar.x + 320px;
+        y: toolbar.y + toolbar.height + 9px;
+        width: 200px;
+        height: 52px;
+        border-radius: 7px;
+        border-width: 1px;
+        border-color: root.ui-border;
+        background: root.ui-panel;
+        drop-shadow-blur: 18px;
+        drop-shadow-color: #171c2328;
+        HorizontalLayout {
+            padding: 12px;
+            spacing: 8px;
+            AutoColorButton { selected: root.stroke-color-automatic; accent: root.accent; border: root.ui-muted; clicked => root.stroke-color-auto-selected(); }
+            ColorButton { value: #1f2328; selected: !root.stroke-color-automatic && root.stroke-color-hex == "#1f2328"; accent: root.accent; border: root.ui-muted; clicked => root.stroke-color-changed("#1f2328"); }
+            ColorButton { value: #ffffff; selected: !root.stroke-color-automatic && root.stroke-color-hex == "#ffffff"; accent: root.accent; border: root.ui-muted; clicked => root.stroke-color-changed("#ffffff"); }
+            ColorButton { value: #1769ff; selected: !root.stroke-color-automatic && root.stroke-color-hex == "#1769ff"; accent: root.accent; border: root.ui-muted; clicked => root.stroke-color-changed("#1769ff"); }
+            ColorButton { value: #ed4e4e; selected: !root.stroke-color-automatic && root.stroke-color-hex == "#ed4e4e"; accent: root.accent; border: root.ui-muted; clicked => root.stroke-color-changed("#ed4e4e"); }
+        }
+    }
+
+    if root.width-popover-visible : Rectangle {
+        x: toolbar.x + 374px;
+        y: toolbar.y + toolbar.height + 9px;
+        width: 190px;
+        height: 58px;
+        border-radius: 7px;
+        border-width: 1px;
+        border-color: root.ui-border;
+        background: root.ui-panel;
+        drop-shadow-blur: 18px;
+        drop-shadow-color: #171c2328;
+        HorizontalLayout {
+            padding: 12px;
+            spacing: 10px;
+            Slider {
+                minimum: 1;
+                maximum: 14;
+                step: 1;
+                value: root.stroke-width;
+                changed(value) => root.stroke-width-changed(value);
+            }
+            Text { width: 24px; text: round(root.stroke-width); color: root.ui-muted; font-size: 11px; vertical-alignment: center; horizontal-alignment: right; }
+        }
+    }
+
+    if root.settings-visible : Rectangle {
+        x: parent.width - self.width - 14px;
+        y: 64px;
+        width: 360px;
+        height: min(486px, parent.height - 78px);
+        border-radius: 8px;
+        border-width: 1px;
+        border-color: root.ui-border;
+        background: root.ui-panel;
+        drop-shadow-blur: 24px;
+        drop-shadow-color: #171c2335;
+
+        VerticalLayout {
+            padding: 14px;
+            spacing: 10px;
+
+            HorizontalLayout {
+                spacing: 4px;
+                SegmentButton { text: "General"; selected: root.settings-page == 0; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.settings-page = 0; } }
+                SegmentButton { visible: root.trackpad-available; text: "Trackpad"; selected: root.settings-page == 1; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.settings-page = 1; } }
+            }
+
+            Rectangle { height: 1px; background: root.ui-border; }
+
+            settings-scroll := ScrollView {
+                horizontal-scrollbar-policy: ScrollBarPolicy.always-off;
+                viewport-width: self.visible-width;
+                viewport-height: root.settings-page == 0 ? general-content.height : trackpad-content.height;
+
+                general-content := Rectangle {
+                    visible: root.settings-page == 0;
+                    width: settings-scroll.visible-width - (settings-scroll.viewport-height > settings-scroll.visible-height ? 14px : 0px);
+                    height: general-layout.preferred-height;
+
+                    general-layout := VerticalLayout {
+                        width: parent.width;
+                        spacing: 10px;
+
+                CheckBox {
+                    text: "Hold to tidy pen shapes";
+                    checked: root.auto-shape-enabled;
+                    toggled => root.auto-shape-changed(self.checked);
+                }
+                Rectangle { height: 1px; background: root.ui-border; }
+                Text { text: "Canvas background"; color: root.ui-muted; font-size: 11px; }
+                HorizontalLayout {
+                    spacing: 4px;
+                    SegmentButton { text: "System"; selected: root.canvas-background-mode == "system"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.background-mode-changed("system"); }
+                    SegmentButton { text: "White"; selected: root.canvas-background-mode == "white"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.background-mode-changed("white"); }
+                    SegmentButton { text: "Black"; selected: root.canvas-background-mode == "black"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.background-mode-changed("black"); }
+                    SegmentButton { text: "Custom"; selected: root.canvas-background-mode == "custom"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.background-mode-changed("custom"); }
+                }
+                LineEdit {
+                    visible: root.canvas-background-mode == "custom";
+                    text: root.custom-canvas-color;
+                    placeholder-text: "#ffffff";
+                    accepted(value) => root.custom-canvas-color-changed(value);
+                }
+
+                Rectangle { height: 1px; background: root.ui-border; }
+                Text { text: "Send background"; color: root.ui-muted; font-size: 11px; }
+                HorizontalLayout {
+                    spacing: 4px;
+                    SegmentButton { text: "Visible"; selected: root.send-background-mode == "visible"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.send-background-mode-changed("visible"); }
+                    SegmentButton { text: "White"; selected: root.send-background-mode == "white"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.send-background-mode-changed("white"); }
+                    SegmentButton { text: "Black"; selected: root.send-background-mode == "black"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.send-background-mode-changed("black"); }
+                    SegmentButton { text: "Custom"; selected: root.send-background-mode == "custom"; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => root.send-background-mode-changed("custom"); }
+                }
+                LineEdit {
+                    visible: root.send-background-mode == "custom";
+                    text: root.custom-send-color;
+                    placeholder-text: "#ffffff";
+                    accepted(value) => root.custom-send-color-changed(value);
+                }
+
+                Rectangle { height: 1px; background: root.ui-border; }
+                Text { text: "Invocation"; color: root.ui-muted; font-size: 11px; }
+                ComboBox {
+                    model: root.is-macos ? [
+                        "Both Command keys",
+                        "Double-tap Command",
+                        "Both Option keys",
+                        "Double-tap Option",
+                        "Command + Shift + Space"
+                    ] : [
+                        "Both Control keys",
+                        "Double-tap Control",
+                        "Both Alt keys",
+                        "Double-tap Alt",
+                        "Control + Shift + Space"
+                    ];
+                    current-index: root.invocation-mode == "dual-modifier" ? 0 :
+                        root.invocation-mode == "double-modifier" ? 1 :
+                        root.invocation-mode == "dual-alternate" ? 2 :
+                        root.invocation-mode == "double-alternate" ? 3 : 4;
+                    selected(value) => {
+                        if (value == self.model[0]) { root.invocation-mode-changed("dual-modifier"); }
+                        else if (value == self.model[1]) { root.invocation-mode-changed("double-modifier"); }
+                        else if (value == self.model[2]) { root.invocation-mode-changed("dual-alternate"); }
+                        else if (value == self.model[3]) { root.invocation-mode-changed("double-alternate"); }
+                        else { root.invocation-mode-changed("conventional"); }
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    KeyStateBadge {
+                        horizontal-stretch: 1;
+                        text: root.invocation-mode == "dual-alternate" || root.invocation-mode == "double-alternate"
+                            ? (root.is-macos ? "Left Option" : "Left Alt")
+                            : (root.is-macos ? "Left Command" : "Left Control");
+                        active: root.invocation-mode == "dual-alternate" || root.invocation-mode == "double-alternate"
+                            ? root.modifier-alternate-left-down
+                            : root.modifier-primary-left-down;
+                        foreground: root.ui-foreground;
+                        muted: root.ui-muted;
+                        accent: root.accent;
+                        surface: root.ui-surface;
+                        active-background: root.ui-selected;
+                    }
+                    KeyStateBadge {
+                        horizontal-stretch: 1;
+                        text: root.invocation-mode == "dual-alternate" || root.invocation-mode == "double-alternate"
+                            ? (root.is-macos ? "Right Option" : "Right Alt")
+                            : (root.is-macos ? "Right Command" : "Right Control");
+                        active: root.invocation-mode == "dual-alternate" || root.invocation-mode == "double-alternate"
+                            ? root.modifier-alternate-right-down
+                            : root.modifier-primary-right-down;
+                        foreground: root.ui-foreground;
+                        muted: root.ui-muted;
+                        accent: root.accent;
+                        surface: root.ui-surface;
+                        active-background: root.ui-selected;
+                    }
+                }
+                if root.invocation-access-state != "ready" : Rectangle {
+                    height: 34px;
+                    border-radius: 5px;
+                    border-width: 1px;
+                    border-color: root.ui-border;
+                    background: root.ui-surface;
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 5px;
+                        spacing: 6px;
+                        Text {
+                            horizontal-stretch: 1;
+                            text: root.invocation-access-state == "permission-required" ? "Keyboard monitoring needs permission" : "Keyboard monitoring unavailable";
+                            color: root.ui-foreground;
+                            font-size: 10px;
+                            vertical-alignment: center;
+                        }
+                        SegmentButton {
+                            width: 62px;
+                            text: "Resolve";
+                            selected: false;
+                            foreground: root.ui-foreground;
+                            accent: root.accent;
+                            selected-background: root.ui-selected;
+                            hover-background: root.ui-hover;
+                            clicked => { root.invocation-permission-visible = true; }
+                        }
+                    }
+                }
+
+                    }
+                }
+
+                trackpad-content := Rectangle {
+                    visible: root.settings-page == 1 && root.trackpad-available;
+                    width: settings-scroll.visible-width - (settings-scroll.viewport-height > settings-scroll.visible-height ? 14px : 0px);
+                    height: trackpad-layout.preferred-height;
+
+                    trackpad-layout := VerticalLayout {
+                        width: parent.width;
+                        spacing: 8px;
+
+                Rectangle {
+                    height: 166px;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: root.ui-border;
+                    background: root.ui-surface;
+
+                    Rectangle {
+                        x: (parent.width - self.width) / 2;
+                        y: 12px;
+                        width: 70px;
+                        height: 3px;
+                        border-radius: 2px;
+                        background: root.ui-border;
+                    }
+
+                    HotspotButton { x: 9px; y: 9px; tooltip: "Top left"; selected: root.hotspot-selected-index == 0; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 0; root.hotspot-selected(0); } }
+                    HotspotButton { x: (parent.width - self.width) / 2; y: 9px; tooltip: "Top edge"; selected: root.hotspot-selected-index == 1; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 1; root.hotspot-selected(1); } }
+                    HotspotButton { x: parent.width - self.width - 9px; y: 9px; tooltip: "Top right"; selected: root.hotspot-selected-index == 2; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 2; root.hotspot-selected(2); } }
+                    HotspotButton { x: parent.width - self.width - 9px; y: (parent.height - self.height) / 2; tooltip: "Right edge"; selected: root.hotspot-selected-index == 3; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 3; root.hotspot-selected(3); } }
+                    HotspotButton { x: parent.width - self.width - 9px; y: parent.height - self.height - 9px; tooltip: "Bottom right"; selected: root.hotspot-selected-index == 4; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 4; root.hotspot-selected(4); } }
+                    HotspotButton { x: (parent.width - self.width) / 2; y: parent.height - self.height - 9px; tooltip: "Bottom edge"; selected: root.hotspot-selected-index == 5; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 5; root.hotspot-selected(5); } }
+                    HotspotButton { x: 9px; y: parent.height - self.height - 9px; tooltip: "Bottom left"; selected: root.hotspot-selected-index == 6; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 6; root.hotspot-selected(6); } }
+                    HotspotButton { x: 9px; y: (parent.height - self.height) / 2; tooltip: "Left edge"; selected: root.hotspot-selected-index == 7; foreground: root.ui-muted; accent: root.accent; surface: root.ui-panel; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.hotspot-selected-index = 7; root.hotspot-selected(7); } }
+                }
+
+                Text { text: root.hotspot-label; color: root.ui-foreground; font-size: 13px; font-weight: 600; }
+                Text { text: "Gesture"; color: root.ui-muted; font-size: 10px; }
+                ComboBox {
+                    model: ["Touch", "Long press", "Click"];
+                    current-index: root.hotspot-trigger == "touch" ? 0 : root.hotspot-trigger == "long-press" ? 1 : 2;
+                    selected(value) => {
+                        root.hotspot-binding-changed(
+                            root.hotspot-selected-index,
+                            value == self.model[0] ? "touch" : value == self.model[1] ? "long-press" : "click",
+                            root.hotspot-action
+                        );
+                    }
+                }
+                Text { text: "Action"; color: root.ui-muted; font-size: 10px; }
+                ComboBox {
+                    model: ["None", "Select", "Pen", "Eraser", "Arrow", "Rectangle", "Ellipse", "Text", "Undo", "Redo", "Delete", "Send"];
+                    current-index: root.hotspot-action == "none" ? 0 :
+                        root.hotspot-action == "select" ? 1 :
+                        root.hotspot-action == "pen" ? 2 :
+                        root.hotspot-action == "eraser" ? 3 :
+                        root.hotspot-action == "arrow" ? 4 :
+                        root.hotspot-action == "rectangle" ? 5 :
+                        root.hotspot-action == "ellipse" ? 6 :
+                        root.hotspot-action == "text" ? 7 :
+                        root.hotspot-action == "undo" ? 8 :
+                        root.hotspot-action == "redo" ? 9 :
+                        root.hotspot-action == "delete" ? 10 : 11;
+                    selected(value) => {
+                        root.hotspot-binding-changed(
+                            root.hotspot-selected-index,
+                            root.hotspot-trigger,
+                            value == self.model[0] ? "none" :
+                            value == self.model[1] ? "select" :
+                            value == self.model[2] ? "pen" :
+                            value == self.model[3] ? "eraser" :
+                            value == self.model[4] ? "arrow" :
+                            value == self.model[5] ? "rectangle" :
+                            value == self.model[6] ? "ellipse" :
+                            value == self.model[7] ? "text" :
+                            value == self.model[8] ? "undo" :
+                            value == self.model[9] ? "redo" :
+                            value == self.model[10] ? "delete" : "send"
+                        );
+                    }
+                }
+                    CheckBox {
+                        text: "Use trackpad sketch mode by default";
+                        checked: root.trackpad-mode;
+                        toggled => { root.trackpad-mode = self.checked; root.trackpad-mode-changed(self.checked); }
+                    }
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        // Keep the input alive and focused on the neutral canvas. Only its
+        // geometry and appearance change when typing or composition starts.
+        x: root.text-editor-visible
+            ? clamp(root.text-editor-x * 1px, 8px, parent.width - self.width - 8px)
+            : 0px; // Keep the neutral input at the window edge, away from drawing.
+        y: root.text-editor-visible
+            ? clamp(root.text-editor-y * 1px, 72px, parent.height - self.height - 8px)
+            : 0px;
+        width: root.text-editor-visible ? 300px : 1px;
+        height: root.text-editor-visible ? 148px : 1px;
+        opacity: root.text-editor-visible ? 1 : 0;
+        border-radius: 6px;
+        border-width: root.text-editor-visible ? 1px : 0px;
+        border-color: root.accent;
+        background: root.ui-panel;
+        drop-shadow-blur: root.text-editor-visible ? 18px : 0px;
+        drop-shadow-color: #171c2328;
+
+        ContextMenuArea {
+            x: root.text-editor-visible ? 8px : 0px;
+            y: root.text-editor-visible ? 8px : 0px;
+            width: root.text-editor-visible ? parent.width - 16px : 1px;
+            height: root.text-editor-visible ? parent.height - 50px : 1px;
+            Menu {
+                MenuItem { title: "Cut"; enabled: root.text-editor-visible; activated => { text-editor.cut(); } }
+                MenuItem { title: "Copy"; enabled: root.text-editor-visible; activated => { text-editor.copy(); } }
+                MenuItem { title: "Paste"; activated => { text-editor.paste(); } }
+                MenuItem { title: "Select All"; enabled: root.text-editor-visible; activated => { text-editor.select-all(); } }
+            }
+
+            editor-scroll := ScrollView {
+                width: parent.width;
+                height: parent.height;
+                viewport-width: self.visible-width;
+                viewport-height: max(self.visible-height, text-editor.preferred-height);
+
+                text-editor := TextInput {
+                    enabled: !root.settings-visible && !root.about-visible && !root.invocation-permission-visible;
+                    text <=> root.text-editor-value;
+                    single-line: false;
+                    wrap: word-wrap;
+                    font-size: 14px;
+                    color: root.text-editor-visible ? root.ui-foreground : transparent;
+                    text-cursor-width: root.text-editor-visible ? 1px : 0px;
+                    selection-background-color: root.accent;
+                    selection-foreground-color: root.ui-surface;
+                    page-height: editor-scroll.visible-height;
+                    accessible-role: text-input;
+                    accessible-label: "Text";
+
+                    changed preedit-text => { root.reveal-text-editor(); }
+                    edited => { root.reveal-text-editor(); }
+
+                    cursor-position-changed(position) => {
+                        if (root.text-editor-visible) {
+                            if (position.y + editor-scroll.viewport-y < 0px) {
+                                editor-scroll.viewport-y = -position.y;
+                            } else if (position.y + editor-scroll.viewport-y + 24px > editor-scroll.visible-height) {
+                                editor-scroll.viewport-y = min(0px, editor-scroll.visible-height - position.y - 24px);
+                            }
+                        }
+                    }
+
+                    key-pressed(event) => {
+                        // Candidate navigation and confirmation belong to the IME.
+                        if (self.preedit-text != "") {
+                            if (event.text == Key.Return) { return accept; }
+                            return reject;
+                        }
+                        if (root.text-editor-visible) {
+                            if (event.text == Key.Return && event.modifiers.control) {
+                                if (!event.repeat) { root.text-accepted(self.text); }
+                                return accept;
+                            }
+                            if (event.text == Key.Escape) {
+                                root.text-cancelled();
+                                return accept;
+                            }
+                            return reject;
+                        }
+                        if ((root.is-macos ? event.modifiers.meta : event.modifiers.control) && event.text == "w") {
+                            root.dismiss-requested();
+                            return accept;
+                        }
+                        if (root.about-visible) {
+                            if (event.text == Key.Escape) { root.about-closed(); }
+                            return accept;
+                        }
+                        if (root.invocation-permission-visible) { return accept; }
+                        if (root.settings-visible) {
+                            if (event.text == Key.Escape) { root.settings-visible = false; }
+                            return accept;
+                        }
+                        if ((root.is-macos ? event.modifiers.meta : event.modifiers.control) && event.text == "z") {
+                            if (event.modifiers.shift) { root.redo-requested(); }
+                            else { root.undo-requested(); }
+                            return accept;
+                        }
+                        if ((root.is-macos ? event.modifiers.meta : event.modifiers.control) && event.text == "y") {
+                            root.redo-requested();
+                            return accept;
+                        }
+                        if (event.text == Key.Return) {
+                            if (!event.repeat && !event.modifiers.control) { root.send-requested(); }
+                            return accept;
+                        }
+                        if (event.text == Key.Escape) {
+                            root.escape-requested();
+                            return accept;
+                        }
+                        if (event.text == Key.Delete || event.text == Key.Backspace) {
+                            root.delete-requested();
+                            return accept;
+                        }
+                        reject
+                    }
+
+                }
+            }
+        }
+
+        Text {
+            visible: root.text-editor-visible && root.text-editor-value == "" && root.text-editor-preedit == "";
+            x: 8px;
+            y: 8px;
+            text: "Type";
+            font-size: 14px;
+            color: root.ui-muted;
+        }
+
+        Text {
+            x: 10px;
+            y: parent.height - 36px;
+            visible: root.text-editor-visible;
+            width: parent.width - 82px;
+            height: 30px;
+            text: root.is-macos ? "⌘Enter: Done · Drag text to move" : "Ctrl+Enter: Done · Drag to move";
+            color: root.ui-muted;
+            font-size: 11px;
+            vertical-alignment: center;
+        }
+        SegmentButton {
+            x: parent.width - 66px;
+            y: parent.height - 36px;
+            width: 60px;
+            text: "Done";
+            visible: root.text-editor-visible;
+            enabled: root.text-editor-preedit == "";
+            selected: true;
+            foreground: root.ui-foreground;
+            accent: root.accent;
+            selected-background: root.ui-selected;
+            hover-background: root.ui-hover;
+            clicked => { root.text-accepted(root.text-editor-value); }
+        }
+    }
+
+    if root.trackpad-suggestion-visible && root.trackpad-available && !root.settings-visible && !root.about-visible && !root.color-popover-visible && !root.width-popover-visible : Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: 72px;
+        width: 360px;
+        height: 46px;
+        border-radius: 7px;
+        border-width: 1px;
+        border-color: root.ui-border;
+        background: root.ui-panel;
+        drop-shadow-blur: 18px;
+        drop-shadow-color: #171c2328;
+        HorizontalLayout {
+            padding-left: 12px;
+            padding-right: 8px;
+            spacing: 8px;
+            Image { width: 18px; source: @image-url("../assets/icons/touchpad.svg"); colorize: root.accent; }
+            Text { horizontal-stretch: 1; text: "Draw directly on your trackpad"; color: root.ui-foreground; font-size: 12px; vertical-alignment: center; }
+            SegmentButton { width: 54px; text: "Try"; selected: false; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.trackpad-mode = true; root.trackpad-mode-changed(true); root.trackpad-suggestion-visible = false; } }
+            SegmentButton { width: 54px; text: "Later"; selected: false; foreground: root.ui-foreground; accent: root.accent; selected-background: root.ui-selected; hover-background: root.ui-hover; clicked => { root.trackpad-suggestion-visible = false; } }
+        }
+    }
+
+    if root.toast != "" : Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: parent.height - self.height - 18px;
+        width: toast-text.preferred-width + 28px;
+        height: 34px;
+        border-radius: 7px;
+        background: #20242af2;
+        drop-shadow-blur: 12px;
+        drop-shadow-color: #00000032;
+        toast-text := Text {
+            text: root.toast;
+            color: #ffffff;
+            font-size: 12px;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    if root.about-visible : Rectangle {
+        background: #00000066;
+
+        TouchArea { }
+
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 350px;
+            height: 210px;
+            border-radius: 8px;
+            border-width: 1px;
+            border-color: root.ui-border;
+            background: root.ui-panel;
+            drop-shadow-blur: 26px;
+            drop-shadow-color: #00000045;
+
+            Text {
+                x: 18px;
+                y: 17px;
+                text: "Kaku2Okur";
+                color: root.ui-foreground;
+                font-size: 17px;
+                font-weight: 600;
+            }
+            Text {
+                x: 18px;
+                y: 43px;
+                text: "Version 0.2.0";
+                color: root.ui-muted;
+                font-size: 11px;
+            }
+            IconButton {
+                x: parent.width - self.width - 10px;
+                y: 10px;
+                icon: @image-url("../assets/icons/x.svg");
+                tooltip: "Close";
+                foreground: root.ui-foreground;
+                accent: root.accent;
+                selected-background: root.ui-selected;
+                hover-background: root.ui-hover;
+                clicked => root.about-closed();
+            }
+            AboutSlint {
+                x: 35px;
+                y: 77px;
+                width: parent.width - 70px;
+                height: 112px;
+            }
+        }
+    }
+
+    if root.invocation-permission-visible : Rectangle {
+        background: #00000066;
+
+        TouchArea { }
+
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: min(430px, parent.width - 32px);
+            height: 258px;
+            border-radius: 8px;
+            border-width: 1px;
+            border-color: root.ui-border;
+            background: root.ui-panel;
+            drop-shadow-blur: 26px;
+            drop-shadow-color: #00000045;
+
+            Text {
+                x: 18px;
+                y: 18px;
+                text: "Allow keyboard monitoring";
+                color: root.ui-foreground;
+                font-size: 16px;
+                font-weight: 600;
+            }
+            Text {
+                x: 18px;
+                y: 52px;
+                width: parent.width - 36px;
+                height: 72px;
+                text: root.is-macos
+                    ? "Kaku2Okur needs Input Monitoring permission to detect both Option keys while another app is active."
+                    : "Global keyboard monitoring is unavailable. Check the operating system permissions, then try again.";
+                color: root.ui-muted;
+                font-size: 12px;
+                wrap: word-wrap;
+                vertical-alignment: top;
+            }
+            Text {
+                x: 18px;
+                y: 128px;
+                width: parent.width - 36px;
+                height: 68px;
+                wrap: word-wrap;
+                vertical-alignment: top;
+                text: root.invocation-permission-checking ? "Checking keyboard monitoring..."
+                    : root.invocation-permission-result != "" ? root.invocation-permission-result
+                    : root.invocation-access-state == "permission-required" ? "Permission required" : "Listener unavailable";
+                color: root.accent;
+                font-size: 11px;
+            }
+            HorizontalLayout {
+                x: 18px;
+                y: parent.height - self.height - 16px;
+                width: parent.width - 36px;
+                height: 30px;
+                spacing: 6px;
+                Rectangle { horizontal-stretch: 1; }
+                SegmentButton {
+                    width: 72px;
+                    text: "Later";
+                    selected: false;
+                    foreground: root.ui-foreground;
+                    accent: root.accent;
+                    selected-background: root.ui-selected;
+                    hover-background: root.ui-hover;
+                    clicked => root.invocation-permission-dismissed();
+                }
+                SegmentButton {
+                    visible: root.is-macos;
+                    width: 112px;
+                    text: "Open Settings";
+                    selected: false;
+                    foreground: root.ui-foreground;
+                    accent: root.accent;
+                    selected-background: root.ui-selected;
+                    hover-background: root.ui-hover;
+                    clicked => root.invocation-settings-requested();
+                }
+                SegmentButton {
+                    width: 94px;
+                    text: root.invocation-permission-checking ? "Checking..." : "Check Again";
+                    enabled: !root.invocation-permission-checking;
+                    selected: false;
+                    foreground: root.ui-foreground;
+                    accent: root.accent;
+                    selected-background: root.ui-selected;
+                    hover-background: root.ui-hover;
+                    clicked => root.invocation-permission-requested();
+                }
+            }
+        }
+    }
+
+}

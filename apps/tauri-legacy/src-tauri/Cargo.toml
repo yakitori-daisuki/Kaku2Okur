@@ -1,0 +1,33 @@
+[package]
+name = "kaku2okur"
+version = "0.1.0"
+description = "Draw an idea and send it anywhere"
+authors = ["Kaku2Okur"]
+edition = "2021"
+
+[lib]
+name = "kaku2okur_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[target.'cfg(target_os = "macos")'.build-dependencies]
+cc = "1"
+
+[dependencies]
+arboard = "3.6"
+base64 = "0.22"
+enigo = "0.6"
+image = { version = "0.25", default-features = false, features = ["png"] }
+log = "0.4"
+parking_lot = "0.12"
+rdev = "0.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = ["image-png", "macos-private-api", "tray-icon"] }
+tauri-plugin-global-shortcut = "2"
+thiserror = "2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2.1" }

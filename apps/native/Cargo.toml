@@ -1,0 +1,51 @@
+[package]
+name = "kaku2okur-native"
+version = "0.2.0"
+description = "A lightweight native sketch-to-paste utility"
+authors = ["Kaku2Okur"]
+edition = "2021"
+rust-version = "1.90"
+
+[lib]
+name = "kaku2okur"
+path = "src/lib.rs"
+
+[[bin]]
+name = "Kaku2Okur"
+path = "src/main.rs"
+
+[dependencies]
+arboard = "3.6"
+enigo = "0.6"
+memmap2 = "0.9"
+parking_lot = "0.12"
+raw-window-handle = "0.6"
+rdev = "0.5.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+slint = { version = "=1.16.1", default-features = false, features = ["accessibility", "backend-winit", "compat-1-2", "raw-window-handle-06", "renderer-software", "software-renderer-path", "software-renderer-systemfonts"] }
+thiserror = "2"
+tiny-skia = "0.12"
+ttf-parser = "0.25"
+
+[target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
+tray-icon = { version = "0.24.2", default-features = false }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Gdi",
+    "Win32_System_Registry",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_WindowsAndMessaging",
+] }
+
+[build-dependencies]
+slint-build = "=1.16.1"
+
+[dev-dependencies]
+# Match Slint exactly to exercise the same composition events as its winit backend.
+i-slint-core = "=1.16.1"
+
+[target.'cfg(target_os = "macos")'.build-dependencies]
+cc = "1"

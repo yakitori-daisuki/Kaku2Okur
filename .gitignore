@@ -1,0 +1,19 @@
+node_modules/
+dist/
+target/
+src-tauri/target/
+src-tauri/gen/
+.DS_Store
+*.log
+.tmp-ice-inspect/
+docs/qa/
+
+# Folder-local authentication and development state (never publish credentials).
+.github-local/
+.env
+.env.*
+!.env.example
+.codex/*
+!.codex/environments/
+.codex/environments/*
+!.codex/environments/environment.toml

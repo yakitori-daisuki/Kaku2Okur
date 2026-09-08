@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-capability",
+  "description": "Capabilities for the Kaku2Okur canvas window",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
+

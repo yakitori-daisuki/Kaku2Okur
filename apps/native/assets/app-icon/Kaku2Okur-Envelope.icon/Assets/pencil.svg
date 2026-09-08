@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F6DBA5"/><stop offset="0.55" stop-color="#EBC284"/><stop offset="1" stop-color="#BD853E"/>
+    </linearGradient>
+    <linearGradient id="yellow" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#D99100"/><stop offset="0.35" stop-color="#FFC51A"/><stop offset="0.75" stop-color="#FFD93E"/><stop offset="1" stop-color="#EDA600"/>
+    </linearGradient>
+    <linearGradient id="end" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#F9BC16"/><stop offset="1" stop-color="#CF8D05"/>
+    </linearGradient>
+    <clipPath id="barrel">
+      <path d="M-36 89 L-24 98 L-12 89 L0 98 L13 89 L25 98 L36 89 L36 302 Q36 314 24 314 L-24 314 Q-36 314 -36 302 Z"/>
+    </clipPath>
+  </defs>
+  <g transform="translate(652 577) rotate(-42)">
+    <path d="M-4 0 Q0 -5 4 0 L36 89 L27 107 L-26 107 L-36 89 Z" fill="url(#wood)"/>
+    <path d="M-4 0 Q0 -5 4 0 L13 27 Q0 33 -13 27 Z" fill="#282D31"/>
+    <path d="M-2 5 L-9 24" fill="none" stroke="#899098" stroke-width="2.5" stroke-linecap="round"/>
+    <g clip-path="url(#barrel)">
+      <path d="M-36 89 L36 89 L36 314 L-36 314 Z" fill="url(#yellow)"/>
+      <path d="M-36 89 L-24 89 L-24 314 L-36 314 Z" fill="#D99300"/>
+      <path d="M13 89 L25 89 L25 304 L13 304 Z" fill="#FFDC42"/>
+      <path d="M-36 302 Q0 308 36 302 L36 314 L-36 314 Z" fill="url(#end)"/>
+      <path d="M-24 102 L-24 298 Q-24 304 -18 304 L18 304 Q24 304 24 298" fill="none" stroke="#FFE983" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
