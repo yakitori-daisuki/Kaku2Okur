@@ -21,6 +21,8 @@ Date: 2026-09-09. Environment: Apple Silicon Mac, Rust/Cargo 1.90.0, Xcode 26.5 
 | Release download command | 8 local-fixture tests passed: valid verification, checksum mismatch, wrong filename, extra manifest line/field, download failure, explicit mode requirement, and exact parity with both README commands |
 | Folder-local Git setup | Author, noreply email, GitHub credential helper, main branch and planned HTTPS origin configured in this checkout only |
 
-Not verified: Windows execution, Intel Mac execution, macOS 14 hardware testing, end-to-end paste acceptance by another application, Developer ID signing, notarization, or GitHub publication. The local GitHub CLI still requires user authentication; no remote repository was created during these checks.
+GitHub follow-up: authenticated as `yakitori-daisuki` using the folder-local CLI configuration, created the private repository at https://github.com/yakitori-daisuki/Kaku2Okur, and pushed `main`. Release assets have not been published.
 
-日本語: 既存テスト39件、Release版のビルド・署名・起動、インストーラの整合性・隔離フォルダへの配置・既存版バックアップ・破損拒否を確認しました。入力監視の権限は付与していません。Windows・Intel Mac・最小対応OSでの実機確認、公証、GitHub公開はこの検証の対象外です。
+Not verified: Windows execution, Intel Mac execution, macOS 14 hardware testing, end-to-end paste acceptance by another application, Developer ID signing, notarization, or downloads from a published GitHub Release.
+
+日本語: 既存テスト39件、Release版のビルド・署名・起動、インストーラの整合性・隔離フォルダへの配置・既存版バックアップ・破損拒否を確認しました。入力監視の権限は付与していません。フォルダ専用設定で認証し、専用の非公開リポジトリを作成して main を push 済みです。Windows・Intel Mac・最小対応OSでの実機確認、公証、GitHub Release からのダウンロードは未確認です。Release アセットはまだ配布していません。
